@@ -1,0 +1,27 @@
+# AI Code Reviewer Configuration
+provider: claude
+model: claude-sonnet-4-6
+
+review:
+  categories:
+    - code-quality
+    - security
+    - performance
+
+  max_files: 20
+  max_lines: 500
+  min_score_to_pass: 6
+  auto_suggest_fixes: true
+
+ignore:
+  files:
+    - "*.md"
+    - "*.json"
+    - "package-lock.json"
+    - "yarn.lock"
+  directories:
+    - node_modules
+    - dist
+    - build
+    - .github
+    - coverage

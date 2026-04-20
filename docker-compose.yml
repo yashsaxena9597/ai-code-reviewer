@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: ai-code-reviewer
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+      - redis
+    volumes:
+      - ./src:/app/src
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/ai-code-reviewer
+      REDIS_URL: redis://redis:6379
+
+volumes:
+  mongo-data:
+  redis-data:
