@@ -1,0 +1,59 @@
+service: ai-code-reviewer
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-south-1'}
+  memorySize: 512
+  timeout: 120
+  environment:
+    NODE_ENV: production
+    GITHUB_APP_ID: ${env:GITHUB_APP_ID}
+    GITHUB_APP_PRIVATE_KEY: ${env:GITHUB_APP_PRIVATE_KEY}
+    GITHUB_WEBHOOK_SECRET: ${env:GITHUB_WEBHOOK_SECRET}
+    GITHUB_CLIENT_ID: ${env:GITHUB_CLIENT_ID, ''}
+    GITHUB_CLIENT_SECRET: ${env:GITHUB_CLIENT_SECRET, ''}
+    ANTHROPIC_API_KEY: ${env:ANTHROPIC_API_KEY}
+    OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+    MONGODB_URI: ${env:MONGODB_URI}
+    REDIS_URL: ${env:REDIS_URL}
+    DEFAULT_AI_PROVIDER: claude
+    LOG_LEVEL: info
+
+functions:
+  webhook:
+    handler: dist/index.handler
+    events:
+      - http:
+          path: /webhook
+          method: post
+          cors: true
+      - http:
+          path: /health
+          method: get
+          cors: true
+  api:
+    handler: dist/index.handler
+    events:
+      - http:
+          path: /api/{proxy+}
+          method: any
+          cors: true
+
+package:
+  individually: true
+  patterns:
+    - "dist/**"
+    - "node_modules/**"
+    - "!node_modules/@types/**"
+    - "!node_modules/typescript/**"
+    - "!tests/**"
+    - "!src/**"
+    - "!dashboard/**"
+    - "!coverage/**"
+
+plugins:
+  - serverless-offline

@@ -1,0 +1,21 @@
+{
+  "findings": [
+    {
+      "line": 3,
+      "severity": "critical",
+      "category": "security",
+      "issue": "Hardcoded secret in source code",
+      "explanation": "The SECRET variable contains a hardcoded credential 'hardcoded-secret-123'. This is a critical security vulnerability as secrets in source code can be exposed through version control history, logs, or error messages. Use environment variables or a secrets manager instead.",
+      "suggestedFix": "const SECRET = process.env.JWT_SECRET;\nif (!SECRET) throw new Error('JWT_SECRET environment variable is required');"
+    },
+    {
+      "line": 6,
+      "severity": "warning",
+      "category": "code-quality",
+      "issue": "Empty catch block swallows errors silently",
+      "explanation": "The catch block in verifyToken silently catches all errors without logging or distinguishing between different failure modes (expired token, invalid signature, malformed token). This makes debugging authentication issues difficult.",
+      "suggestedFix": "} catch (error) {\n  if (error instanceof jwt.TokenExpiredError) {\n    logger.warn('Token expired');\n  } else {\n    logger.error('Token verification failed', { error });\n  }\n  return false;\n}"
+    }
+  ],
+  "summary": "The code has a critical security vulnerability with a hardcoded secret and a minor code quality issue with silent error handling. The hardcoded secret should be addressed immediately before merging."
+}

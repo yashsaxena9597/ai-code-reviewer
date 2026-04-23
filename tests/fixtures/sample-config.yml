@@ -1,0 +1,19 @@
+provider: openai
+model: gpt-4o
+
+review:
+  categories:
+    - code-quality
+    - security
+  max_files: 10
+  max_lines: 300
+  min_score_to_pass: 7
+  auto_suggest_fixes: false
+
+ignore:
+  files:
+    - "*.test.ts"
+    - "*.spec.ts"
+  directories:
+    - __tests__
+    - fixtures
